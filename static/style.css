@@ -1,0 +1,91 @@
+/* ===============================
+   Palette et mise en page globale
+   =============================== */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f8f8fb;
+    color: #2b244d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* ===============================
+   Conteneur principal
+   =============================== */
+.container {
+    background-color: #ffffff;
+    padding: 2rem 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* ===============================
+   Titres et paragraphes
+   =============================== */
+h2 {
+    color: #3a2a7c;
+    margin-bottom: 1.5rem;
+}
+
+p {
+    font-size: 0.95rem;
+    margin-top: 1rem;
+}
+
+/* ===============================
+   Formulaire
+   =============================== */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+input {
+    padding: 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ===============================
+   Boutons
+   =============================== */
+button {
+    background-color: #3a2a7c;
+    color: white;
+    border: none;
+    padding: 0.7rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2f2163;
+}
+
+/* ===============================
+   Liens
+   =============================== */
+a {
+    color: #3a2a7c;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.btn-link {
+    font-weight: 500;
+}

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenue</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Bienvenue, {{ user_login }} !</h2>
+        <p>Dernière connexion : {{ user_date_login }}</p>
+        <p><a href="/login">Déconnexion</a></p>
+    </div>
+</body>
+</html>
