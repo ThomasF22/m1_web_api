@@ -9,6 +9,8 @@ from fastapi.templating import Jinja2Templates
 templates = Jinja2Templates(directory="templates")
 router = APIRouter()
 
+# Endpoints API Frontend
+
 @router.get("/", response_class=HTMLResponse)
 def main_page(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})

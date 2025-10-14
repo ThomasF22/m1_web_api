@@ -6,6 +6,8 @@ from database import get_session
 
 router = APIRouter(prefix="/api")
 
+# Endpoints API Backend
+
 @router.get("/users")
 def get_users(session: Session = Depends(get_session)):
     return session.exec(select(User)).all()
