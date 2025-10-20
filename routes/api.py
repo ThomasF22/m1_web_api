@@ -51,3 +51,60 @@ def delete_user(user_id: int, session: Session = Depends(get_session)):
     session.delete(user)
     session.commit()
     return {"message": f"User {user_id} deleted"}
+
+
+# Produit endpoints
+from models import Produit
+
+
+@router.get("/produits")
+def get_produits(session: Session = Depends(get_session)):
+    return session.exec(select(Produit)).all()
+
+
+@router.get("/produits/{id_p}")
+def get_produit(id_p: int, session: Session = Depends(get_session)):
+    prod = session.get(Produit, id_p)
+    if not prod:
+        raise HTTPException(status_code=404, detail="Produit not found")
+    return prod
+
+
+@router.post("/produits")
+def create_produit(type_p: str = Form(...), designation_p: str = Form(...), description_p: str | None = Form(None), prix_ht: float = Form(...), stock_p: int = Form(...), session: Session = Depends(get_session)):
+    # naive creation
+    prod = Produit(type_p=type_p, designation_p=designation_p, description_p=description_p, prix_ht=prix_ht, date_in=datetime.now(), timeS_in=datetime.now(), stock_p=stock_p)
+    session.add(prod)
+    session.commit()
+    session.refresh(prod)
+    return {"message": "Produit created", "id_p": prod.id_p}
+
+
+@router.put("/produits/{id_p}")
+def update_produit(id_p: int, type_p: str | None = Form(None), designation_p: str | None = Form(None), description_p: str | None = Form(None), prix_ht: float | None = Form(None), stock_p: int | None = Form(None), session: Session = Depends(get_session)):
+    prod = session.get(Produit, id_p)
+    if not prod:
+        raise HTTPException(status_code=404, detail="Produit not found")
+    if type_p is not None:
+        prod.type_p = type_p
+    if designation_p is not None:
+        prod.designation_p = designation_p
+    if description_p is not None:
+        prod.description_p = description_p
+    if prix_ht is not None:
+        prod.prix_ht = prix_ht
+    if stock_p is not None:
+        prod.stock_p = stock_p
+    session.add(prod)
+    session.commit()
+    return {"message": "Produit updated", "id_p": prod.id_p}
+
+
+@router.delete("/produits/{id_p}")
+def delete_produit(id_p: int, session: Session = Depends(get_session)):
+    prod = session.get(Produit, id_p)
+    if not prod:
+        raise HTTPException(status_code=404, detail="Produit not found")
+    session.delete(prod)
+    session.commit()
+    return {"message": f"Produit {id_p} deleted"}

@@ -42,3 +42,11 @@ def register_user(request: Request, email: str = Form(...), password: str = Form
     session.add(user)
     session.commit()
     return RedirectResponse("/login", status_code=303)
+
+
+@router.get("/produits", response_class=HTMLResponse)
+def produits_list(request: Request, session: Session = Depends(get_session)):
+    from models import Produit
+    produits = session.exec(select(Produit)).all()
+    # produits is a list of Produit objects; pass to template
+    return templates.TemplateResponse("produits.html", {"request": request, "produits": produits})
