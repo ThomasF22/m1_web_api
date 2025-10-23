@@ -27,7 +27,7 @@ def login_user(request: Request, email: str = Form(...), password: str = Form(..
     user.user_date_login = datetime.now()
     session.add(user)
     session.commit()
-    return RedirectResponse(url="/admin/produits", status_code=303)
+    return RedirectResponse(url="/admin", status_code=303)
 
 @router.get("/register", response_class=HTMLResponse)
 def register_form(request: Request):

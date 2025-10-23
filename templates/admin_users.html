@@ -2,10 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Gérer les Produits</title>
+    <title>Gérer les Utilisateurs</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
-        /* Ajout de styles simples pour le tableau admin */
         .container { max-width: 960px; text-align: left; }
         table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
         th, td { border: 1px solid #ddd; padding: 8px; }
@@ -22,29 +21,29 @@
 </head>
 <body>
     <div class="container">
-        <h2>Gestion des Produits</h2>
-        <p><a href="/admin/produits/new" class="btn-link">Ajouter un nouveau produit</a></p>
+        <h2>Gestion des Utilisateurs</h2>
+        <p><a href="/admin/users/new" class="btn-link">Ajouter un nouvel utilisateur</a></p>
 
         <table>
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Désignation</th>
-                    <th>Prix HT</th>
-                    <th>Stock</th>
+                    <th>Login</th>
+                    <th>Email</th>
+                    <th>Compte ID</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in context_items %}
                 <tr>
-                    <td>{{ item.id_p }}</td>
-                    <td>{{ item.designation_p }}</td>
-                    <td>{{ '%.2f'|format(item.prix_ht) }} €</td>
-                    <td>{{ item.stock_p }}</td>
+                    <td>{{ item.user_id }}</td>
+                    <td>{{ item.user_login }}</td>
+                    <td>{{ item.user_mail }}</td>
+                    <td>{{ item.user_compte_id }}</td>
                     <td class="action-links">
-                        <a href="{{ request.url.path }}edit/{{ item.id_p }}">Modifier</a>
-                        <form action="{{ request.url.path }}delete/{{ item.id_p }}" method="post" class="action-form">
+                        <a href="{{ request.url.path }}edit/{{ item.user_id }}">Modifier</a>
+                        <form action="{{ request.url.path }}delete/{{ item.user_id }}" method="post" class="action-form">
                             <button type="submit" onclick="return confirm('Êtes-vous sûr ?');">Supprimer</button>
                         </form>
                     </td>
@@ -53,7 +52,7 @@
             </tbody>
         </table>
         
-        <p style="margin-top: 2rem;"><a href="/admin">Retour à l'accueil</a></p>
+        <p style="margin-top: 2rem;"><a href="/admin/">Retour au panneau d'admin</a></p>
     </div>
 </body>
 </html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if context_item %}Modifier Utilisateur{% else %}Nouveau Utilisateur{% endif %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>{% if context_item %}Modifier Utilisateur{% else %}Nouveau Utilisateur{% endif %}</h2>
+
+        <form action="{{ request.url.path }}" method="post">
+            
+            <input 
+              type="text" 
+              name="user_login" 
+              placeholder="Login" 
+              value="{{ context_item.user_login if context_item else '' }}" 
+              required>
+            
+            <input 
+              type="email" 
+              name="user_mail" 
+              placeholder="Email" 
+              value="{{ context_item.user_mail if context_item else '' }}" 
+              required>
+            
+            <input 
+              type="password" 
+              name="user_password" 
+              placeholder="Mot de passe" 
+              value="" 
+              required>
+            
+            <input 
+              type="number" 
+              name="user_compte_id" 
+              placeholder="ID Compte (ex: 1, 2...)" 
+              value="{{ context_item.user_compte_id if context_item else '' }}" 
+              required>
+            
+            <button type="submit">
+              {% if context_item %}Mettre à jour{% else %}Enregistrer{% endif %}
+            </button>
+        </form>
+        
+        <p><a href="/admin/users">Annuler</a></p>
+    </div>
+</body>
+</html>

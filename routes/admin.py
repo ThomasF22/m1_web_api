@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Form # <-- Assurez-vous d'importer Form
+from fastapi import APIRouter, Depends, Form , Request
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 from database import get_session
 from models import Produit, User, ProduitForm, UserForm
 from .admin_factory import create_admin_crud_router
@@ -9,6 +10,11 @@ router = APIRouter(prefix="/admin")
 
 
 templates = Jinja2Templates(directory="templates")
+
+@router.get("/", response_class=HTMLResponse)
+def admin_dashboard(request: Request):
+    """Affiche la page d'accueil de l'administration (le hub)."""
+    return templates.TemplateResponse("admin_dashboard.html", {"request": request})
 
 
 # --- DÉPENDANCE DE FORMULAIRE POUR PRODUIT ---

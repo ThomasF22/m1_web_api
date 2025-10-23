@@ -7,7 +7,7 @@ from datetime import datetime
 from fastapi.templating import Jinja2Templates
 from models import  Produit, User
 
-# --- FONCTION HELPER (POUR NE PAS SE RÉPÉTER) ---
+# --- permet de trouver le produit en utlisant sa pk
 def get_item_or_404(session: Session, model: Type[SQLModel], pk_name: str, item_id: int):
     """
     Remplace session.get() en utilisant select().where()
@@ -40,7 +40,7 @@ def create_admin_crud_router(
     redirect_url = parent_prefix + prefix
     
     
-    # 1. LISTER (GET /)
+    #  LISTER (GET /)
     @router.get("/", response_class=HTMLResponse)
     def admin_list(request: Request, session: Session = session_dep):
         items = session.exec(select(model)).all()
@@ -49,7 +49,7 @@ def create_admin_crud_router(
             {"request": request, "context_items": items}
         )
 
-    # 2. AFFICHER FORMULAIRE (Nouveau) (GET /new)
+    #  AFFICHER FORMULAIRE (Nouveau) (GET /new)
     @router.get("/new", response_class=HTMLResponse)
     def admin_form_new(request: Request):
         return templates.TemplateResponse(
@@ -57,7 +57,7 @@ def create_admin_crud_router(
             {"request": request, "context_item": None}
         )
     
-    # 3. TRAITER FORMULAIRE (Nouveau) (POST /new)
+    #  TRAITER FORMULAIRE (Nouveau) (POST /new)
     @router.post("/new", response_class=RedirectResponse)
     def admin_create(session: Session = session_dep, form_data: BaseModel = form_dependency):
         
@@ -77,7 +77,7 @@ def create_admin_crud_router(
         return RedirectResponse(url=redirect_url, status_code=303)
 
     # --- CORRECTION ICI ---
-    # 4. AFFICHER FORMULAIRE (Modifier) (GET /edit/{item_id})
+    #  AFFICHER FORMULAIRE (Modifier) (GET /edit/{item_id})
     @router.get("/edit/{item_id}", response_class=HTMLResponse)
     def admin_form_edit(request: Request, item_id: int, session: Session = session_dep):
         # On remplace session.get() par notre helper
@@ -89,7 +89,7 @@ def create_admin_crud_router(
         )
 
     # --- CORRECTION ICI ---
-    # 5. TRAITER FORMULAIRE (Modifier) (POST /edit/{id})
+    #  TRAITER FORMULAIRE (Modifier) (POST /edit/{id})
     @router.post("/edit/{item_id}", response_class=RedirectResponse)
     def admin_update(item_id: int, session: Session = session_dep, form_data: BaseModel = form_dependency):
         
@@ -104,8 +104,8 @@ def create_admin_crud_router(
         session.commit()
         return RedirectResponse(url=redirect_url, status_code=303)
 
-    # --- CORRECTION ICI ---
-    # 6. SUPPRIMER (POST /delete/{id})
+
+    #  SUPPRIMER (POST /delete/{id})
     @router.post("/delete/{item_id}", response_class=RedirectResponse)
     def admin_delete(item_id: int, session: Session = session_dep):
         
