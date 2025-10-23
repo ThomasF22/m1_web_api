@@ -1,6 +1,6 @@
 from sqlmodel import create_engine, Session
 
-DATABASE_URL = "mysql+pymysql://root@localhost/2025_M1"
+DATABASE_URL = "mysql+pymysql://user_2025:user@localhost/2025_M1"
 engine = create_engine(DATABASE_URL, echo=True)
 
 def get_session():
