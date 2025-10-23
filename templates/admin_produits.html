@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gérer les Produits</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Ajout de styles simples pour le tableau admin */
+        .container { max-width: 960px; text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f4f4f4; }
+        .action-links a, .action-form button {
+            display: inline-block; padding: 4px 8px;
+            font-size: 0.9rem; border-radius: 4px;
+            text-decoration: none;
+        }
+        .action-links a { background-color: #007bff; color: white; }
+        .action-form button { background-color: #dc3545; color: white; border: none; cursor: pointer; }
+        .action-form { display: inline; margin-left: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gestion des Produits</h2>
+        <p><a href="/admin/produits/new" class="btn-link">Ajouter un nouveau produit</a></p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Désignation</th>
+                    <th>Prix HT</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in produits %}
+                <tr>
+                    <td>{{ p.id_p }}</td>
+                    <td>{{ p.designation_p }}</td>
+                    <td>{{ '%.2f'|format(p.prix_ht) }} €</td>
+                    <td>{{ p.stock_p }}</td>
+                    <td class="action-links">
+                        <a href="/admin/produits/edit/{{ p.id_p }}">Modifier</a>
+                        
+                        <form action="/admin/produits/delete/{{ p.id_p }}" method="post" class="action-form">
+                            <button type="submit" onclick="return confirm('Êtes-vous sûr ?');">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <p style="margin-top: 2rem;"><a href="/">Retour à l'accueil</a></p>
+    </div>
+</body>
+</html>

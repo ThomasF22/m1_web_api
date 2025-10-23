@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if produit %}Modifier Produit{% else %}Nouveau Produit{% endif %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>{% if produit %}Modifier Produit{% else %}Nouveau Produit{% endif %}</h2>
+
+        <form 
+          action="{% if produit %}/admin/produits/edit/{{ produit.id_p }}{% else %}/admin/produits/new{% endif %}" 
+          method="post">
+            
+            <input 
+              type="text" 
+              name="designation_p" 
+              placeholder="Désignation" 
+              value="{{ produit.designation_p if produit else '' }}" 
+              required>
+            
+            <input 
+              type="text" 
+              name="type_p" 
+              placeholder="Type (ex: fruit, légume)" 
+              value="{{ produit.type_p if produit else '' }}" 
+              required>
+            
+            <textarea 
+              name="description_p" 
+              placeholder="Description (optionnel)"
+              rows="4">{{ produit.description_p if produit else '' }}</textarea>
+            
+            <input 
+              type="number" 
+              step="0.01" 
+              name="prix_ht" 
+              placeholder="Prix HT (ex: 1.99)" 
+              value="{{ produit.prix_ht if produit else '' }}" 
+              required>
+            
+            <input 
+              type="number" 
+              name="stock_p" 
+              placeholder="Stock (ex: 150)" 
+              value="{{ produit.stock_p if produit else '' }}" 
+              required>
+            
+            <button type="submit">
+              {% if produit %}Mettre à jour{% else %}Enregistrer{% endif %}
+            </button>
+        </form>
+        
+        <p><a href="/admin/produits">Annuler</a></p>
+    </div>
+</body>
+</html>
