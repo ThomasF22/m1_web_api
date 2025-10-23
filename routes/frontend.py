@@ -60,23 +60,24 @@ def produits_list(request: Request, session: Session = Depends(get_session)):
     # produits is a list of Produit objects; pass to template
     return templates.TemplateResponse("produits.html", {"request": request, "produits": produits})
 
-
+"""
 @router.get("/admin/produits", response_class=HTMLResponse)
 def admin_produits_list(request: Request, session: Session = Depends(get_session)):
-    """Affiche la page admin avec la liste des produits."""
+    #Affiche la page admin avec la liste des produits.
     produits = session.exec(select(Produit)).all()
     return templates.TemplateResponse(
         "admin_produits.html", 
         {"request": request, "produits": produits}
     )
+"""
 
 
 
-
+"""
 # AFFICHER LE FORMULAIRE (pour "Nouveau")
 @router.get("/admin/produits/new", response_class=HTMLResponse)
 def admin_produit_form_new(request: Request):
-    """Affiche le formulaire de création de produit (vide)."""
+    #Affiche le formulaire de création de produit (vide).
     return templates.TemplateResponse(
         "admin_produit_form.html", 
         {"request": request, "produit": None} # On envoie 'None'
@@ -92,7 +93,7 @@ def admin_produit_create(
     prix_ht: float = Form(...),
     stock_p: int = Form(...)
 ):
-    """Crée le nouveau produit en BDD (logique copiée de api.py)"""
+    #Crée le nouveau produit en BDD (logique copiée de api.py)
     prod = Produit(
         type_p=type_p, 
         designation_p=designation_p, 
@@ -112,7 +113,7 @@ def admin_produit_create(
 # AFFICHER LE FORMULAIRE (pour "Modifier")
 @router.get("/admin/produits/edit/{id_p}", response_class=HTMLResponse)
 def admin_produit_form_edit(request: Request, id_p: int, session: Session = Depends(get_session)):
-    """Affiche le formulaire pré-rempli pour modifier un produit."""
+    #Affiche le formulaire pré-rempli pour modifier un produit.
     prod = session.get(Produit, id_p)
     if not prod:
         raise HTTPException(status_code=404, detail="Produit non trouvé")
@@ -133,7 +134,7 @@ def admin_produit_update(
     prix_ht: float = Form(...),
     stock_p: int = Form(...)
 ):
-    """Met à jour le produit en BDD (logique copiée de api.py)"""
+    #Met à jour le produit en BDD (logique copiée de api.py)
     prod = session.get(Produit, id_p)
     if not prod:
         raise HTTPException(status_code=404, detail="Produit non trouvé")
@@ -154,7 +155,7 @@ def admin_produit_update(
 #TRAITER LA SUPPRESSION (DELETE)
 @router.post("/admin/produits/delete/{id_p}", response_class=RedirectResponse)
 def admin_produit_delete(id_p: int, session: Session = Depends(get_session)):
-    """Supprime le produit (logique copiée de api.py)"""
+    #Supprime le produit (logique copiée de api.py)
     prod = session.get(Produit, id_p)
     if not prod:
         raise HTTPException(status_code=404, detail="Produit non trouvé")
@@ -163,3 +164,4 @@ def admin_produit_delete(id_p: int, session: Session = Depends(get_session)):
     session.commit()
     
     return RedirectResponse(url="/admin/produits", status_code=303)
+"""

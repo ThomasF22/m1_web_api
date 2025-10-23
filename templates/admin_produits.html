@@ -36,16 +36,15 @@
                 </tr>
             </thead>
             <tbody>
-                {% for p in produits %}
+                {% for item in context_items %}
                 <tr>
-                    <td>{{ p.id_p }}</td>
-                    <td>{{ p.designation_p }}</td>
-                    <td>{{ '%.2f'|format(p.prix_ht) }} €</td>
-                    <td>{{ p.stock_p }}</td>
+                    <td>{{ item.id_p }}</td>
+                    <td>{{ item.designation_p }}</td>
+                    <td>{{ '%.2f'|format(item.prix_ht) }} €</td>
+                    <td>{{ item.stock_p }}</td>
                     <td class="action-links">
-                        <a href="/admin/produits/edit/{{ p.id_p }}">Modifier</a>
-                        
-                        <form action="/admin/produits/delete/{{ p.id_p }}" method="post" class="action-form">
+                        <a href="{{ request.url.path }}edit/{{ item.id_p }}">Modifier</a>
+                        <form action="{{ request.url.path }}delete/{{ item.id_p }}" method="post" class="action-form">
                             <button type="submit" onclick="return confirm('Êtes-vous sûr ?');">Supprimer</button>
                         </form>
                     </td>
