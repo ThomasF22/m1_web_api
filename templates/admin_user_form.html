@@ -32,13 +32,6 @@
               value="" 
               required>
             
-            <input 
-              type="number" 
-              name="user_compte_id" 
-              placeholder="ID Compte (ex: 1, 2...)" 
-              value="{{ context_item.user_compte_id if context_item else '' }}" 
-              required>
-            
             <button type="submit">
               {% if context_item %}Mettre à jour{% else %}Enregistrer{% endif %}
             </button>

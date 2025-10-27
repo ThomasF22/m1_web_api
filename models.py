@@ -37,4 +37,3 @@ class UserForm(BaseModel):
     user_login: str
     user_mail: str
     user_password: str
-    user_compte_id: int

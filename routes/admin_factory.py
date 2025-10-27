@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlmodel import Session, select, SQLModel
+from sqlmodel import Session, select, SQLModel, func
 from pydantic import BaseModel
 from typing import Type
 from datetime import datetime
@@ -19,7 +19,6 @@ def get_item_or_404(session: Session, model: Type[SQLModel], pk_name: str, item_
     if not item:
         raise HTTPException(status_code=404, detail="Item non trouvé")
     return item
-# ------------------------------------------------
 
 
 def create_admin_crud_router(
@@ -67,6 +66,11 @@ def create_admin_crud_router(
             data_dict['date_in'] = datetime.now()
             data_dict['timeS_in'] = datetime.now()
         if model == User:
+
+            max_id = session.scalar(select(func.max(User.user_compte_id)))
+            new_compte_id = (max_id or 0) + 1
+            data_dict['user_compte_id'] = new_compte_id
+
             data_dict['user_date_new'] = datetime.now()
             data_dict['user_date_login'] = datetime.now()
             
@@ -76,7 +80,6 @@ def create_admin_crud_router(
         session.commit()
         return RedirectResponse(url=redirect_url, status_code=303)
 
-    # --- CORRECTION ICI ---
     #  AFFICHER FORMULAIRE (Modifier) (GET /edit/{item_id})
     @router.get("/edit/{item_id}", response_class=HTMLResponse)
     def admin_form_edit(request: Request, item_id: int, session: Session = session_dep):
@@ -88,12 +91,10 @@ def create_admin_crud_router(
             {"request": request, "context_item": db_item}
         )
 
-    # --- CORRECTION ICI ---
     #  TRAITER FORMULAIRE (Modifier) (POST /edit/{id})
     @router.post("/edit/{item_id}", response_class=RedirectResponse)
     def admin_update(item_id: int, session: Session = session_dep, form_data: BaseModel = form_dependency):
         
-        # On remplace session.get() par notre helper
         db_item = get_item_or_404(session, model, pk_name, item_id)
             
         form_data_dict = form_data.model_dump(exclude_unset=True)

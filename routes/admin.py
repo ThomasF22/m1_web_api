@@ -37,13 +37,11 @@ def get_user_form(
     user_login: str = Form(...),
     user_mail: str = Form(...),
     user_password: str = Form(...),
-    user_compte_id: int = Form(...)
 ) -> UserForm:
     return UserForm(
         user_login=user_login,
         user_mail=user_mail,
         user_password=user_password,
-        user_compte_id=user_compte_id
     )
 
 

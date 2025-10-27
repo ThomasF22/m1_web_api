@@ -30,6 +30,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Désignation</th>
+                    <th>Type</th>
                     <th>Prix HT</th>
                     <th>Stock</th>
                     <th>Actions</th>
@@ -40,6 +41,7 @@
                 <tr>
                     <td>{{ item.id_p }}</td>
                     <td>{{ item.designation_p }}</td>
+                    <td>{{ item.type_p }}</td>
                     <td>{{ '%.2f'|format(item.prix_ht) }} €</td>
                     <td>{{ item.stock_p }}</td>
                     <td class="action-links">
