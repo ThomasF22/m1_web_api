@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Type
 from datetime import datetime
 from fastapi.templating import Jinja2Templates
-from models import  Produit, User
+from models import  Produit, User, UserRole
 
 # --- permet de trouver le produit en utlisant sa pk
 def get_item_or_404(session: Session, model: Type[SQLModel], pk_name: str, item_id: int):
@@ -23,14 +23,15 @@ def get_item_or_404(session: Session, model: Type[SQLModel], pk_name: str, item_
 
 def create_admin_crud_router(
     model: Type[SQLModel],
-    form_dependency: BaseModel,        
     session_dep: Session,
     templates: Jinja2Templates,
     parent_prefix: str,
     prefix: str,
     list_template: str,
     form_template: str,
-    pk_name: str
+    pk_name: str,
+    create_form_dependency: BaseModel, # Pour la création
+    update_form_dependency: BaseModel  # Pour la mise à jour
 ):
     """
     Génère un APIRouter complet pour le CRUD admin d'un modèle.
@@ -58,7 +59,7 @@ def create_admin_crud_router(
     
     #  TRAITER FORMULAIRE (Nouveau) (POST /new)
     @router.post("/new", response_class=RedirectResponse)
-    def admin_create(session: Session = session_dep, form_data: BaseModel = form_dependency):
+    def admin_create(session: Session = session_dep, form_data: BaseModel = create_form_dependency):
         
         data_dict = form_data.model_dump()
         
@@ -66,16 +67,14 @@ def create_admin_crud_router(
             data_dict['date_in'] = datetime.now()
             data_dict['timeS_in'] = datetime.now()
         if model == User:
-
             max_id = session.scalar(select(func.max(User.user_compte_id)))
             new_compte_id = (max_id or 0) + 1
             data_dict['user_compte_id'] = new_compte_id
-
             data_dict['user_date_new'] = datetime.now()
             data_dict['user_date_login'] = datetime.now()
+            data_dict['user_role'] = UserRole.USER
             
         db_item = model(**data_dict)
-        
         session.add(db_item)
         session.commit()
         return RedirectResponse(url=redirect_url, status_code=303)
@@ -93,7 +92,7 @@ def create_admin_crud_router(
 
     #  TRAITER FORMULAIRE (Modifier) (POST /edit/{id})
     @router.post("/edit/{item_id}", response_class=RedirectResponse)
-    def admin_update(item_id: int, session: Session = session_dep, form_data: BaseModel = form_dependency):
+    def admin_update(item_id: int, session: Session = session_dep, form_data: BaseModel = update_form_dependency):
         
         db_item = get_item_or_404(session, model, pk_name, item_id)
             

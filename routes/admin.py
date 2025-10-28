@@ -2,24 +2,27 @@ from fastapi import APIRouter, Depends, Form , Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from database import get_session
-from models import Produit, User, ProduitForm, UserForm
+from models import Produit, User, ProduitForm, UserForm, UserUpdateForm, UserRole
 from .admin_factory import create_admin_crud_router
+from security import is_admin
 
 # Initialise le routeur principal de l'admin
-router = APIRouter(prefix="/admin")
-
+router = APIRouter(
+    prefix="/admin",
+    dependencies=[Depends(is_admin)]
+    )
 
 templates = Jinja2Templates(directory="templates")
 
 @router.get("/", response_class=HTMLResponse)
 def admin_dashboard(request: Request):
-    """Affiche la page d'accueil de l'administration (le hub)."""
     return templates.TemplateResponse("admin_dashboard.html", {"request": request})
+
 
 
 # --- DÉPENDANCE DE FORMULAIRE POUR PRODUIT ---
 # Cette fonction lit le formulaire et retourne un modèle ProduitForm
-def get_produit_form(
+def get_produit_create_form(
     type_p: str = Form(...),
     designation_p: str = Form(...),
     prix_ht: float = Form(...),
@@ -33,22 +36,36 @@ def get_produit_form(
     )
 
 # --- DÉPENDANCE DE FORMULAIRE POUR USER ---
-def get_user_form(
+def get_user_create_form(
     user_login: str = Form(...),
     user_mail: str = Form(...),
     user_password: str = Form(...),
+    user_role: UserRole = Form(...)
 ) -> UserForm:
     return UserForm(
         user_login=user_login,
         user_mail=user_mail,
         user_password=user_password,
+        user_role = user_role
+    )
+
+def get_user_update_form(
+    user_login: str = Form(...),
+    user_mail: str = Form(...),
+    user_role: UserRole = Form(...)
+) -> UserUpdateForm:
+    return UserUpdateForm(
+        user_login=user_login,
+        user_mail=user_mail,
+        user_role=user_role
     )
 
 
 # Crée les routes CRUD pour les Produits
 produits_router = create_admin_crud_router(
     model=Produit,
-    form_dependency=Depends(get_produit_form), 
+    create_form_dependency=Depends(get_produit_create_form), 
+    update_form_dependency=Depends(get_produit_create_form),
     session_dep=Depends(get_session),
     templates=templates,
     parent_prefix= router.prefix ,
@@ -61,7 +78,8 @@ produits_router = create_admin_crud_router(
 # Crée les routes CRUD pour les Utilisateurs
 users_router = create_admin_crud_router(
     model=User,
-    form_dependency=Depends(get_user_form), 
+    create_form_dependency=Depends(get_user_create_form), 
+    update_form_dependency=Depends(get_user_update_form), 
     session_dep=Depends(get_session),
     templates=templates,
     parent_prefix= router.prefix ,
@@ -70,7 +88,6 @@ users_router = create_admin_crud_router(
     form_template="admin_user_form.html",
     pk_name="user_id"
 )
-
 # Inclut les routeurs générés dans le routeur admin principal
 router.include_router(produits_router)
 router.include_router(users_router)

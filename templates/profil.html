@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mon Profil</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Mon Profil</h2>
+        <p>Bienvenue, <strong>{{ user.user_login }}</strong> !</p>
+        <p>Email : {{ user.user_mail }}</p>
+        <p>Rôle : {{ user.user_role }}</p>
+        
+        <p style="margin-top: 2rem;">
+            <a href="/produits" class="btn-link">Consulter les produits</a>
+        </p>
+        <p>
+            <a href="/logout" class="btn-link">Déconnexion</a>
+        </p>
+    </div>
+</body>
+</html>

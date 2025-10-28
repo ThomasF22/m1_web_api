@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% if context_item %}Modifier Utilisateur{% else %}Nouveau Utilisateur{% endif %}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css"> 
 </head>
 <body>
     <div class="container">
@@ -25,12 +25,29 @@
               value="{{ context_item.user_mail if context_item else '' }}" 
               required>
             
+            {% if not context_item %}
             <input 
               type="password" 
               name="user_password" 
               placeholder="Mot de passe" 
-              value="" 
               required>
+            {% endif %}
+            
+            <div>
+                <label for="user_role" style="display: block; margin-bottom: 0.3rem; text-align: left;">Rôle de l'utilisateur</label>
+                <select name="user_role" id="user_role" style="width:100%; padding: 0.7rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 0.5rem; box-sizing: border-box;">
+                    
+                    <option value="user" 
+                      {% if context_item and context_item.user_role == 'user' %}selected{% endif %}>
+                      User
+                    </option>
+                    
+                    <option value="admin" 
+                      {% if context_item and context_item.user_role == 'admin' %}selected{% endif %}>
+                      Admin
+                    </option>
+                </select>
+            </div>
             
             <button type="submit">
               {% if context_item %}Mettre à jour{% else %}Enregistrer{% endif %}

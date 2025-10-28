@@ -3,8 +3,9 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlmodel import Session, select, func
 from datetime import datetime
 from database import get_session
-from models import User, Produit
+from models import User, Produit, UserRole
 from fastapi.templating import Jinja2Templates
+from security import create_access_token, get_current_user_from_cookie
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter()
@@ -27,7 +28,22 @@ def login_user(request: Request, email: str = Form(...), password: str = Form(..
     user.user_date_login = datetime.now()
     session.add(user)
     session.commit()
-    return RedirectResponse(url="/admin", status_code=303)
+
+    token_data = {"sub": str(user.user_id), "role": user.user_role}
+    access_token = create_access_token(data=token_data)
+
+    if user.user_role == UserRole.ADMIN:
+        redirect_url = "/admin/"  # Le hub du backoffice
+    else:
+        redirect_url = "/profil"
+
+    response = RedirectResponse(url=redirect_url, status_code=303)
+    response.set_cookie(
+        key="access_token", 
+        value=access_token, 
+        httponly=True # Important pour la sécurité
+    )
+    return response
 
 @router.get("/register", response_class=HTMLResponse)
 def register_form(request: Request):
@@ -60,108 +76,21 @@ def produits_list(request: Request, session: Session = Depends(get_session)):
     # produits is a list of Produit objects; pass to template
     return templates.TemplateResponse("produits.html", {"request": request, "produits": produits})
 
-"""
-@router.get("/admin/produits", response_class=HTMLResponse)
-def admin_produits_list(request: Request, session: Session = Depends(get_session)):
-    #Affiche la page admin avec la liste des produits.
-    produits = session.exec(select(Produit)).all()
-    return templates.TemplateResponse(
-        "admin_produits.html", 
-        {"request": request, "produits": produits}
-    )
-"""
-
-
-
-"""
-# AFFICHER LE FORMULAIRE (pour "Nouveau")
-@router.get("/admin/produits/new", response_class=HTMLResponse)
-def admin_produit_form_new(request: Request):
-    #Affiche le formulaire de création de produit (vide).
-    return templates.TemplateResponse(
-        "admin_produit_form.html", 
-        {"request": request, "produit": None} # On envoie 'None'
-    )
-
-# TRAITER LE FORMULAIRE (pour "Nouveau")
-@router.post("/admin/produits/new", response_class=RedirectResponse)
-def admin_produit_create(
-    session: Session = Depends(get_session),
-    type_p: str = Form(...),
-    designation_p: str = Form(...),
-    #description_p: str | None = Form(None),
-    prix_ht: float = Form(...),
-    stock_p: int = Form(...)
+@router.get("/profil", response_class=HTMLResponse)
+def get_profil(
+    request: Request, 
+    user: User = Depends(get_current_user_from_cookie) # Protégé !
 ):
-    #Crée le nouveau produit en BDD (logique copiée de api.py)
-    prod = Produit(
-        type_p=type_p, 
-        designation_p=designation_p, 
-        #description_p=description_p, 
-        prix_ht=prix_ht, 
-        date_in=datetime.now(), 
-        timeS_in=datetime.now(), 
-        stock_p=stock_p
-    )
-    session.add(prod)
-    session.commit()
-    
-    # Redirige vers la liste admin
-    return RedirectResponse(url="/admin/produits", status_code=303)
+    return templates.TemplateResponse("profil.html", {"request": request, "user": user})
+
+@router.get("/logout")
+def logout():
+    """
+    Déconnecte l'utilisateur en supprimant le badge (cookie).
+    """
+    response = RedirectResponse(url="/login", status_code=303)
+    response.delete_cookie("access_token")
+    return response
 
 
-# AFFICHER LE FORMULAIRE (pour "Modifier")
-@router.get("/admin/produits/edit/{id_p}", response_class=HTMLResponse)
-def admin_produit_form_edit(request: Request, id_p: int, session: Session = Depends(get_session)):
-    #Affiche le formulaire pré-rempli pour modifier un produit.
-    prod = session.get(Produit, id_p)
-    if not prod:
-        raise HTTPException(status_code=404, detail="Produit non trouvé")
-        
-    return templates.TemplateResponse(
-        "admin_produit_form.html", 
-        {"request": request, "produit": prod} # On envoie le produit
-    )
 
-# TRAITER LE FORMULAIRE (pour "Modifier")
-@router.post("/admin/produits/edit/{id_p}", response_class=RedirectResponse)
-def admin_produit_update(
-    id_p: int,
-    session: Session = Depends(get_session),
-    type_p: str = Form(...),
-    designation_p: str = Form(...),
-    #description_p: str | None = Form(None),
-    prix_ht: float = Form(...),
-    stock_p: int = Form(...)
-):
-    #Met à jour le produit en BDD (logique copiée de api.py)
-    prod = session.get(Produit, id_p)
-    if not prod:
-        raise HTTPException(status_code=404, detail="Produit non trouvé")
-        
-    # Mise à jour des champs
-    prod.type_p = type_p
-    prod.designation_p = designation_p
-    #prod.description_p = description_p
-    prod.prix_ht = prix_ht
-    prod.stock_p = stock_p
-    
-    session.add(prod)
-    session.commit()
-    
-    return RedirectResponse(url="/admin/produits", status_code=303)
-
-
-#TRAITER LA SUPPRESSION (DELETE)
-@router.post("/admin/produits/delete/{id_p}", response_class=RedirectResponse)
-def admin_produit_delete(id_p: int, session: Session = Depends(get_session)):
-    #Supprime le produit (logique copiée de api.py)
-    prod = session.get(Produit, id_p)
-    if not prod:
-        raise HTTPException(status_code=404, detail="Produit non trouvé")
-        
-    session.delete(prod)
-    session.commit()
-    
-    return RedirectResponse(url="/admin/produits", status_code=303)
-"""

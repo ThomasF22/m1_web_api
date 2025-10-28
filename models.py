@@ -1,6 +1,11 @@
 from sqlmodel import SQLModel, Field
 from datetime import datetime
 from pydantic import BaseModel
+from enum import Enum
+
+class UserRole(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
 
 class User(SQLModel, table=True):
     __tablename__ = "user"
@@ -8,9 +13,10 @@ class User(SQLModel, table=True):
     user_login: str
     user_password: str
     user_mail: str
-    user_compte_id : int # ajouter pour correspondre a la db dans la roadmap
+    user_compte_id : int 
     user_date_new: datetime
     user_date_login: datetime | None = None
+    user_role: str = Field(default=UserRole.USER)
 
 
 class Produit(SQLModel, table=True):
@@ -37,3 +43,10 @@ class UserForm(BaseModel):
     user_login: str
     user_mail: str
     user_password: str
+    user_role: UserRole
+
+class UserUpdateForm(BaseModel):
+    """Modèle Pydantic pour la mise à jour d'un User"""
+    user_login: str
+    user_mail: str
+    user_role: UserRole
