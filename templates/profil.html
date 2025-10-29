@@ -8,12 +8,37 @@
 <body>
     <div class="container">
         <h2>Mon Profil</h2>
-        <p>Bienvenue, <strong>{{ user.user_login }}</strong> !</p>
-        <p>Email : {{ user.user_mail }}</p>
-        <p>Rôle : {{ user.user_role }}</p>
+        
+        {% if message %}
+        <p style="color: {% if error %}red{% else %}green{% endif %};">{{ message }}</p>
+        {% endif %}
+
+        <form action="/profil" method="post">
+            <input 
+              type="text" 
+              name="user_login" 
+              placeholder="Pseudo" 
+              value="{{ user.user_login }}" 
+              required>
+            
+            <input 
+              type="email" 
+              name="user_mail" 
+              placeholder="Email" 
+              value="{{ user.user_mail }}" 
+              required>
+            
+            <input 
+              type="password" 
+              name="user_password" 
+              placeholder="Nouveau mot de passe (laisser vide pour ne pas changer)" 
+              value=""> <p style="font-size: 0.9em; color: #666;">Rôle : {{ user.user_role }} (Non modifiable)</p>
+            
+            <button type="submit">Mettre à jour mon profil</button>
+        </form>
         
         <p style="margin-top: 2rem;">
-            <a href="/produits" class="btn-link">Consulter les produits</a>
+            <a href="/produits" class="btn-link">Voir les produits</a>
         </p>
         <p>
             <a href="/logout" class="btn-link">Déconnexion</a>

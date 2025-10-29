@@ -5,10 +5,6 @@ body {
     font-family: 'Segoe UI', sans-serif;
     background-color: #f8f8fb;
     color: #2b244d;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
 }
 
@@ -20,8 +16,9 @@ body {
     padding: 2rem 3rem;
     border-radius: 1rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
+    width: 90%;
+    margin: 2rem auto;
+    max-width: 12000px;
     text-align: center;
 }
 
@@ -92,13 +89,23 @@ a:hover {
 
 /* Produits page */
 .products-container {
-    max-width: 960px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background-color: #fff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
     text-align: left;
+}
+
+.products-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.products-container th, 
+.products-container td {
+    border: 1px solid #ddd;
+    padding: 0.75rem; /* Utilise rem */
+    text-align: left;
+}
+.products-container th {
+    background-color: #f4f4f4;
 }
 
 .products-grid {
@@ -139,4 +146,22 @@ a:hover {
 .product-desc {
     font-size: 0.9rem;
     color: #444;
+}
+
+.page-header {
+    display: flex; /* Active Flexbox */
+    justify-content: space-between; /* Espace entre titre et lien */
+    align-items: center; /* Alignement vertical */
+    margin-bottom: 1.5rem; /* Espace sous le header */
+    padding-bottom: 0.75rem; /* Espace sous le titre */
+    border-bottom: 1px solid #eee; /* Ligne de séparation légère */
+}
+.page-header h2 {
+    margin: 0; /* Enlève la marge par défaut du h2 */
+    color: #3a2a7c; /* Assure la couleur du titre */
+}
+.page-header .btn-link {
+    font-size: 0.95rem; /* Ajuste la taille du lien si besoin */
+    white-space: nowrap; /* Empêche le lien de passer à la ligne */
+    margin-left: 1rem; /* Espace à gauche du lien */
 }

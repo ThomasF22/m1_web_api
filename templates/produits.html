@@ -2,33 +2,47 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Produits</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Liste des Produits</title>
+    <link rel="stylesheet" href="/static/style.css"> 
 </head>
 <body>
-    <div class="products-container">
-        <h2>Produits</h2>
-        {% if produits and produits|length > 0 %}
-        <div class="products-grid">
-            {% for p in produits %}
-            <div class="product-card">
-                <!-- image: try to load by convention using product id -->
-                <img class="product-image" src="/static/images/produits/{{ p.id_p }}.svg" alt="Image de {{ p.designation_p }}" onerror="this.onerror=null; this.src='/static/images/produits/placeholder.svg'">
-                <div>
-                    <div class="product-title">{{ p.designation_p }}</div>
-                    <div class="product-desc">{{ p.description_p or '' }}</div>
-                </div>
-                <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:center;">
-                    <div class="product-price">{{ '%.2f'|format(p.prix_ht) }} €</div>
-                    <div style="font-size:0.9rem; color:#666">Stock: {{ p.stock_p }}</div>
-                </div>  
-            </div>
-            {% endfor %}
+    <div class="container products-container"> 
+
+        <div class="page-header">
+            <h2>Liste des Produits</h2>
+            <a href="/profil" class="btn-link">Mon Profil</a> 
         </div>
+        {% if produits and produits|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Désignation</th>
+                    <th>Type</th>
+                    <th>Prix HT</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in produits %}
+                <tr>
+                    <td>{{ p.id_p }}</td>
+                    <td>{{ p.designation_p }}</td>
+                    <td>{{ p.type_p }}</td>
+                    <td>{{ '%.2f'|format(p.prix_ht) }} €</td>
+                    <td>{{ p.stock_p }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         {% else %}
         <p>Aucun produit disponible pour le moment.</p>
         {% endif %}
-        <p style="margin-top:1rem;"><a href="/">Retour</a></p>
+        
+        <p style="margin-top: 2rem;">
+            <a href="/">Retour</a> |
+            <a href="/logout" class="btn-link">Déconnexion</a>
+        </p>
     </div>
 </body>
 </html>

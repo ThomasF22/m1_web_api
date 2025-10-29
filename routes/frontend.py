@@ -35,7 +35,7 @@ def login_user(request: Request, email: str = Form(...), password: str = Form(..
     if user.user_role == UserRole.ADMIN:
         redirect_url = "/admin/"  # Le hub du backoffice
     else:
-        redirect_url = "/profil"
+        redirect_url = "/produits"
 
     response = RedirectResponse(url=redirect_url, status_code=303)
     response.set_cookie(
@@ -79,9 +79,43 @@ def produits_list(request: Request, session: Session = Depends(get_session)):
 @router.get("/profil", response_class=HTMLResponse)
 def get_profil(
     request: Request, 
-    user: User = Depends(get_current_user_from_cookie) # Protégé !
+    user: User = Depends(get_current_user_from_cookie), 
+    message: str | None = None, 
+    error: bool = False
 ):
-    return templates.TemplateResponse("profil.html", {"request": request, "user": user})
+    """Affiche la page de profil."""
+    return templates.TemplateResponse("profil.html", {
+        "request": request, 
+        "user": user,
+        "message": message,
+        "error": error
+    })
+
+
+@router.post("/profil", response_class=RedirectResponse)
+def update_profil(
+    request: Request,
+    session: Session = Depends(get_session),
+    user: User = Depends(get_current_user_from_cookie), 
+    user_login: str = Form(...),
+    user_mail: str = Form(...),
+    user_password: str | None = Form(None) 
+):
+    
+    # Vérifie si le nouvel email est déjà pris par quelqu'un d'autre
+    existing_user = session.exec(select(User).where(User.user_mail == user_mail, User.user_id != user.user_id)).first()
+    if existing_user:
+        return RedirectResponse(url="/profil?error=true&message=Cet email est déjà utilisé.", status_code=303)
+
+    user.user_login = user_login
+    user.user_mail = user_mail
+    if user_password: 
+        user.user_password = user_password
+        
+    session.add(user)
+    session.commit()
+
+    return RedirectResponse(url="/profil?message=Profil mis à jour avec succès !", status_code=303)
 
 @router.get("/logout")
 def logout():
