@@ -16,6 +16,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>Image</th>
                     <th>ID</th>
                     <th>Désignation</th>
                     <th>Type</th>
@@ -26,6 +27,12 @@
             <tbody>
                 {% for p in produits %}
                 <tr>
+                    <td>
+                        <img src="/static/images/produits/{{ p.image_p }}" 
+                             alt="{{ p.designation_p }}" 
+                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"
+                             onerror="this.onerror=null; this.src='/static/images/produits/placeholder.svg'">
+                    </td>
                     <td>{{ p.id_p }}</td>
                     <td>{{ p.designation_p }}</td>
                     <td>{{ p.type_p }}</td>

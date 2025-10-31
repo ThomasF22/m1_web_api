@@ -9,7 +9,22 @@
     <div class="container">
         <h2>{% if context_item %}Modifier Produit{% else %}Nouveau Produit{% endif %}</h2>
 
-        <form action="{{ request.url.path }}" method="post">
+        <form action="{{ request.url.path }}" method="post" enctype="multipart/form-data">
+            
+            <div>
+                <label for="image_file" style="display: block; margin-bottom: 0.3rem; text-align: left;">Image du produit</label>
+                
+                {% if context_item and context_item.image_p %}
+                <img src="/static/images/produits/{{ context_item.image_p }}" alt="Image actuelle" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem;">
+                <p style="font-size: 0.8rem; color: #666; margin-top: 0;">Laissez vide pour conserver cette image.</p>
+                {% endif %}
+
+                <input 
+                  type="file" 
+                  name="image_file" 
+                  id="image_file"
+                  accept="image/png, image/jpeg, image/svg+xml, image/webp"> 
+              </div>
             
             <input 
               type="text" 

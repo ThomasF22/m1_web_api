@@ -28,6 +28,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>Image</th>
                     <th>ID</th>
                     <th>Désignation</th>
                     <th>Type</th>
@@ -39,6 +40,12 @@
             <tbody>
                 {% for item in context_items %}
                 <tr>
+                    <td>
+                        <img src="/static/images/produits/{{ item.image_p }}" 
+                             alt="{{ item.designation_p }}" 
+                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"
+                             onerror="this.onerror=null; this.src='/static/images/produits/placeholder.svg'">
+                    </td>
                     <td>{{ item.id_p }}</td>
                     <td>{{ item.designation_p }}</td>
                     <td>{{ item.type_p }}</td>

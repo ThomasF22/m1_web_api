@@ -29,6 +29,7 @@ class Produit(SQLModel, table=True):
     date_in: datetime
     timeS_in: datetime
     stock_p: int
+    image_p: str = Field(default="default.png")
 
 class ProduitForm(BaseModel):
     """Modèle Pydantic pour le formulaire Produit"""

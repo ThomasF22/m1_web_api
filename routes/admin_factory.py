@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, Request, HTTPException, File, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlmodel import Session, select, SQLModel, func
 from pydantic import BaseModel
@@ -6,6 +6,12 @@ from typing import Type
 from datetime import datetime
 from fastapi.templating import Jinja2Templates
 from models import  Produit, User, UserRole
+import shutil
+import uuid
+from pathlib import Path
+
+IMAGE_DIR = Path("static/images/produits")
+IMAGE_DIR.mkdir(parents=True, exist_ok=True)
 
 # --- permet de trouver le produit en utlisant sa pk
 def get_item_or_404(session: Session, model: Type[SQLModel], pk_name: str, item_id: int):
@@ -59,13 +65,32 @@ def create_admin_crud_router(
     
     #  TRAITER FORMULAIRE (Nouveau) (POST /new)
     @router.post("/new", response_class=RedirectResponse)
-    def admin_create(session: Session = session_dep, form_data: BaseModel = create_form_dependency):
+    def admin_create(session: Session = session_dep,
+                    form_data: BaseModel = create_form_dependency, 
+                    image_file: UploadFile | None = File(None)):
         
         data_dict = form_data.model_dump()
+
+
         
         if model == Produit:
             data_dict['date_in'] = datetime.now()
             data_dict['timeS_in'] = datetime.now()
+
+            file_name = "default.png" # Fichier par défaut
+            if image_file and image_file.filename:
+                # Crée un nom de fichier unique
+                suffix = Path(image_file.filename).suffix
+                file_name = f"{uuid.uuid4()}{suffix}"
+                save_path = IMAGE_DIR / file_name
+                
+                # Enregistre le fichier sur le disque
+                with open(save_path, "wb") as buffer:
+                    shutil.copyfileobj(image_file.file, buffer)
+            
+            data_dict['image_p'] = file_name
+
+
         if model == User:
             max_id = session.scalar(select(func.max(User.user_compte_id)))
             new_compte_id = (max_id or 0) + 1
@@ -92,13 +117,30 @@ def create_admin_crud_router(
 
     #  TRAITER FORMULAIRE (Modifier) (POST /edit/{id})
     @router.post("/edit/{item_id}", response_class=RedirectResponse)
-    def admin_update(item_id: int, session: Session = session_dep, form_data: BaseModel = update_form_dependency):
+    def admin_update(item_id: int,
+                    session: Session = session_dep, 
+                    form_data: BaseModel = update_form_dependency,
+                    image_file: UploadFile | None = File(None)):
         
         db_item = get_item_or_404(session, model, pk_name, item_id)
             
         form_data_dict = form_data.model_dump(exclude_unset=True)
         for key, value in form_data_dict.items():
             setattr(db_item, key, value)
+
+        if model == Produit and image_file and image_file.filename:
+            suffix = Path(image_file.filename).suffix
+            file_name = f"{uuid.uuid4()}{suffix}"
+            save_path = IMAGE_DIR / file_name
+            
+            with open(save_path, "wb") as buffer:
+                shutil.copyfileobj(image_file.file, buffer)
+            
+            if db_item.image_p != "default.png":
+                old_path = IMAGE_DIR / db_item.image_p
+                old_path.unlink(missing_ok=True)
+            
+            db_item.image_p = file_name 
             
         session.add(db_item)
         session.commit()

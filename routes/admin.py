@@ -26,13 +26,13 @@ def get_produit_create_form(
     type_p: str = Form(...),
     designation_p: str = Form(...),
     prix_ht: float = Form(...),
-    stock_p: int = Form(...)
+    stock_p: int = Form(...),
 ) -> ProduitForm:
     return ProduitForm(
         type_p=type_p,
         designation_p=designation_p,
         prix_ht=prix_ht,
-        stock_p=stock_p
+        stock_p=stock_p,
     )
 
 # --- DÉPENDANCE DE FORMULAIRE POUR USER ---
