@@ -47,6 +47,13 @@
               placeholder="Prix HT (ex: 1.99)" 
               value="{{ context_item.prix_ht if context_item else '' }}" 
               required>
+
+            <input 
+              type="number" 
+              step="0.01" 
+              name="ppromo" 
+              placeholder="Promotion en % (ex: 15.00)" 
+              value="{{ context_item.ppromo if context_item and context_item.ppromo else '' }}">
             
             <input 
               type="number" 

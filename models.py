@@ -30,6 +30,7 @@ class Produit(SQLModel, table=True):
     timeS_in: datetime
     stock_p: int
     image_p: str = Field(default="default.png")
+    ppromo: float | None = Field(default=None)
 
 class ProduitForm(BaseModel):
     """Modèle Pydantic pour le formulaire Produit"""
@@ -38,6 +39,7 @@ class ProduitForm(BaseModel):
     #description_p : str
     prix_ht: float
     stock_p: int
+    ppromo: float | None  = None
 
 class UserForm(BaseModel):
     """Modèle Pydantic pour le formulaire User"""

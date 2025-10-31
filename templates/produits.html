@@ -21,6 +21,7 @@
                     <th>Désignation</th>
                     <th>Type</th>
                     <th>Prix HT</th>
+                    <th>prix promo</th>
                     <th>Stock</th>
                 </tr>
             </thead>
@@ -37,6 +38,17 @@
                     <td>{{ p.designation_p }}</td>
                     <td>{{ p.type_p }}</td>
                     <td>{{ '%.2f'|format(p.prix_ht) }} €</td>
+                    <td>
+                        {% if p.ppromo and p.ppromo > 0 %}
+                            <del style="color: #999; font-size: 0.9rem;">{{ '%.2f'|format(p.prix_ht) }} €</del>
+                            <strong style="color: #dc3545; margin-left: 0.5rem;">
+                                {{ '%.2f'|format(p.prix_ht * (1 - p.ppromo / 100)) }} €
+                            </strong>
+                            <span style="font-size: 0.8rem; color: #dc3545; font-weight: bold;">(-{{ '%.0f'|format(p.ppromo) }}%)</span>
+                        {% else %}
+                            {{ '%.2f'|format(p.prix_ht) }} €
+                        {% endif %}
+                    </td>
                     <td>{{ p.stock_p }}</td>
                 </tr>
                 {% endfor %}

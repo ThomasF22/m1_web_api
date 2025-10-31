@@ -33,6 +33,7 @@
                     <th>Désignation</th>
                     <th>Type</th>
                     <th>Prix HT</th>
+                    <th>prix promo</th>
                     <th>Stock</th>
                     <th>Actions</th>
                 </tr>
@@ -50,6 +51,17 @@
                     <td>{{ item.designation_p }}</td>
                     <td>{{ item.type_p }}</td>
                     <td>{{ '%.2f'|format(item.prix_ht) }} €</td>
+                    <td>
+                        {% if item.ppromo and item.ppromo > 0 %}
+                            <del style="color: #999; font-size: 0.9rem;">{{ '%.2f'|format(item.prix_ht) }} €</del>
+                            <strong style="color: #dc3545; margin-left: 0.5rem;">
+                                {{ '%.2f'|format(item.prix_ht * (1 - item.ppromo / 100)) }} €
+                            </strong>
+                            <span style="font-size: 0.8rem; color: #dc3545; font-weight: bold;">(-{{ '%.0f'|format(item.ppromo) }}%)</span>
+                        {% else %}
+                            {{ '%.2f'|format(item.prix_ht) }} €
+                        {% endif %}
+                    </td>
                     <td>{{ item.stock_p }}</td>
                     <td class="action-links">
                         <a href="{{ request.url.path }}edit/{{ item.id_p }}">Modifier</a>
