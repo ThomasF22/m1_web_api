@@ -55,7 +55,7 @@ def create_admin_crud_router(
             {"request": request, "context_items": items}
         )
 
-    #  AFFICHER FORMULAIRE (Nouveau) (GET /new)
+    #  AFFICHER FORMULAIRE
     @router.get("/new", response_class=HTMLResponse)
     def admin_form_new(request: Request):
         return templates.TemplateResponse(
@@ -63,7 +63,7 @@ def create_admin_crud_router(
             {"request": request, "context_item": None}
         )
     
-    #  TRAITER FORMULAIRE (Nouveau) (POST /new)
+
     @router.post("/new", response_class=RedirectResponse)
     def admin_create(session: Session = session_dep,
                     form_data: BaseModel = create_form_dependency, 
